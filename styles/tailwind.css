@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply overflow-x-hidden;
+  }
+
+  a,
+  button {
+    @apply cursor-default md:cursor-pointer;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md;
+
+    &.btn-black {
+      @apply bg-black hover:bg-black/90 text-white;
+    }
+
+    &.btn-red {
+      @apply bg-red-500 hover:bg-red-600 text-white;
+    }
+
+    &.btn-blue {
+      @apply bg-blue-500 hover:bg-blue-600 text-white;
+    }
+  }
+
+  .sidenav {
+    @apply fixed w-[5.5rem] md:w-[300px] h-full left-0 top-0 border-r border-r-gray-200 bg-white flex flex-col py-4;
+
+    button {
+      @apply bg-gray-200 hover:bg-gray-300 p-4 rounded-md flex gap-x-10 font-bold transition-colors;
+
+      &.active {
+        @apply bg-green-300 hover:bg-green-400;
+      }
+
+      & > span {
+        @apply hidden md:inline;
+      }
+    }
+  }
+
+  .main-container {
+    @apply flex flex-col ml-[5.5rem] md:ml-[300px];
+
+    & > section#contents {
+      @apply p-4;
+    }
+
+    table {
+      @apply w-full table-auto;
+
+      thead {
+        @apply border-b-2 border-b-gray-200 border-collapse;
+        tr {
+          th {
+            @apply px-4 py-2 text-left;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          @apply border-collapse;
+          td {
+            @apply border-b border-b-gray-200 border-collapse px-4 py-2 whitespace-nowrap;
+          }
+        }
+      }
+    }
+  }
+}
+
+@layer utilities {
+  body.__dev * {
+    @apply outline-[#777] outline-dotted outline-1;
+  }
+}
