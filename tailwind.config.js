@@ -11,8 +11,7 @@ delete twColors['blueGray']
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    'src/pages/**.tsx',
-    'src/components/**.tsx'
+    'src/{pages,components}/**/*.tsx'
   ],
   theme: {
     colors: twColors,
@@ -23,6 +22,7 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/forms')
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography')
   ],
 }

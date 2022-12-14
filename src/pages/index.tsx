@@ -1,13 +1,33 @@
-import { serialize } from 'cookie'
 import type { GetServerSideProps, NextPage } from 'next'
+import { serialize } from 'cookie'
+import Head from 'next/head'
+import type { FC, SetStateAction, Dispatch } from 'react'
+import { useState, useEffect } from 'react'
+import { 
+  SideNav as AdminSideNav,
+  Content as AdminContent
+} from '../components/admin'
+import { Header } from '../components'
+import { TargetModal } from '../types'
 
-const Home: NextPage<Props> = ({ user }) => {
-  switch (user.UserLevel.role) {
-    case 'ADMIN':     return <Admin />
-    case 'REGISTRY':  return <Registry />
-    case 'STUDENT':   return <Student />
-    default:          return null
-  }
+const Home: NextPage<{
+  user: any
+}> = ({ user }) => {
+
+  const [modal, setModal] = useState<TargetModal>(null)
+  const role = user.UserLevel.role
+
+  useEffect(() => {
+    document.body.classList.toggle('overflow-hidden', !!modal)
+  }, [modal])
+
+  return (
+    <>
+      { role === 'ADMIN'    &&  <Admin user={user} modal={modal} setModal={setModal} /> }
+      { role === 'REGISTRY' &&  <Registry /> }
+      { role === 'STUDENT'  &&  <Student /> }
+    </>
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -23,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const data = await fetch(`${process.env.BACKEND_URL}/user/current`, {
       headers: {
-        authorization: `Bearer ${context.req.cookies?.authorization}`
+        Authorization: `Bearer ${context.req.cookies?.authorization}`
       }
     })
     .then(data => data.json())
@@ -47,21 +67,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-type Props = {
-  user: any
-}
-
 export default Home
 
-function Admin() {
+const Admin: FC<{
+  user: any,
+  modal: TargetModal,
+  setModal: Dispatch<SetStateAction<TargetModal>>
+}> = ({ user, modal, setModal }) => {
+  const [activePage, setActivePage] = useState<string>('departments')
+
   return (
-    <p>
-      Admin
-    </p>
+    <>
+      <Head>
+        <title>
+          Resrv | Admin
+        </title>
+      </Head>
+      <AdminSideNav activePage={activePage} setActivePage={setActivePage} />
+      <main className='main-container'>
+        <Header activePage={activePage} {...user} role={user?.UserLevel?.role} />
+        <AdminContent activePage={activePage} modal={modal} setModal={setModal} />
+      </main>
+    </>
   )
 }
 
-function Registry() {
+const Registry: FC<{
+
+}> = () => {
   return (
     <p>
       Registry
@@ -69,7 +102,9 @@ function Registry() {
   )
 }
 
-function Student() {
+const Student: FC<{
+
+}> = () => {
   return (
     <p>
       Student

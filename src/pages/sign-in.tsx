@@ -1,10 +1,12 @@
+import type { GetServerSideProps, NextPage } from 'next'
 import { useRef } from 'react'
+import { serialize } from 'cookie'
 import Image from 'next/image'
 import Head from 'next/head'
-import type { GetServerSideProps, NextPage } from 'next'
-import { serialize } from 'cookie'
 
-const SignIn: NextPage<Props> = ({ error }) =>  {
+const SignIn: NextPage<{
+  error: string | undefined
+}> = ({ error }) =>  {
 
   const errorContainer = useRef<HTMLDivElement>(null)
 
@@ -12,7 +14,7 @@ const SignIn: NextPage<Props> = ({ error }) =>  {
     <>
       <Head>
         <title>
-          Sign In
+          Resrv | Sign In
         </title>
       </Head>
       <main className="flex flex-col lg:flex-row min-h-screen">
@@ -83,6 +85,7 @@ const SignIn: NextPage<Props> = ({ error }) =>  {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { token, error } = context.query
+  const { authorization } = context.req.cookies
 
   if (error) {
     switch (error) {
@@ -95,19 +98,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
+  if (!token && !error && authorization) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      },
+      props: {}
+    }
+  }
+
   if (token) {
     try {
       const { error } = await fetch(`${process.env.BACKEND_URL}/user/current`, {
         headers: { 
-          authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}` 
         }
       }).then(response => response.json())
       if (!error) {
         context.res.setHeader('Set-Cookie', [
           serialize('authorization', token as string, {
             path: '/',
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 3
+            maxAge: 1000 * 60 * 60 * 24 * 30
           })
         ])
         return {
@@ -132,10 +144,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {}
   }
-}
-
-type Props = {
-  error: string | undefined
 }
 
 export default SignIn
