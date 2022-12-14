@@ -1,13 +1,5 @@
-import { Dispatch, SetStateAction, type FC } from 'react'
-import { TargetModal } from '../types'
+import { FC } from 'react'
 
-export const Moderators: FC<{
-  modal: TargetModal,
-  setModal: Dispatch<SetStateAction<TargetModal>>
-}> = () => {
-  return (
-    <section>
-      Moderators
-    </section>
-  )
+export const Moderators: FC<Record<string, never>> = () => {
+  return <p>Moderators</p>
 }

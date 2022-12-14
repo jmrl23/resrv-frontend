@@ -1,113 +1,56 @@
 import type { GetServerSideProps, NextPage } from 'next'
+import type { User } from '../types'
 import { serialize } from 'cookie'
-import Head from 'next/head'
-import type { FC, SetStateAction, Dispatch } from 'react'
-import { useState, useEffect } from 'react'
-import { 
-  SideNav as AdminSideNav,
-  Content as AdminContent
-} from '../components/admin'
-import { Header } from '../components'
-import { TargetModal } from '../types'
+import { Role } from '../types'
+import { Admin, Registry, Student } from '../views'
 
-const Home: NextPage<{
-  user: any
-}> = ({ user }) => {
-
-  const [modal, setModal] = useState<TargetModal>(null)
-  const role = user.UserLevel.role
-
-  useEffect(() => {
-    document.body.classList.toggle('overflow-hidden', !!modal)
-  }, [modal])
+const Home: NextPage<{ user: User }> = (props) => {
+  const { user } = props
+  const { role } = user.UserLevel
 
   return (
     <>
-      { role === 'ADMIN'    &&  <Admin user={user} modal={modal} setModal={setModal} /> }
-      { role === 'REGISTRY' &&  <Registry /> }
-      { role === 'STUDENT'  &&  <Student /> }
+      {role === Role.ADMIN && <Admin {...props} />}
+      {role === Role.REGISTRY && <Registry />}
+      {role === Role.STUDENT && <Student />}
     </>
   )
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (!context.req.cookies?.authorization) {
-    return {
-      redirect: {
-        destination: '/sign-in',
-        permanent: false
-      },
-      props: {}
-    }
-  }
-  try {
-    const data = await fetch(`${process.env.BACKEND_URL}/user/current`, {
-      headers: {
-        Authorization: `Bearer ${context.req.cookies?.authorization}`
-      }
-    })
-    .then(data => data.json())
-    if (!data.error) return { props: { user: data } }
-    throw new Error(data.error)
-  } catch(error) {
-    context.res.setHeader('Set-Cookie', [
-      serialize('authorization', '', {
-        path: '/',
-        httpOnly: true,
-        maxAge: 0
-      })
-    ])
-    return {
-      redirect: {
-        destination: '/sign-in?error=2',
-        permanent: false
-      },
-      props: {}
-    }
-  }
 }
 
 export default Home
 
-const Admin: FC<{
-  user: any,
-  modal: TargetModal,
-  setModal: Dispatch<SetStateAction<TargetModal>>
-}> = ({ user, modal, setModal }) => {
-  const [activePage, setActivePage] = useState<string>('departments')
+export const getServerSideProps: GetServerSideProps<{ user: User }> = async (
+  context
+) => {
+  const { session } = context.req.cookies
 
-  return (
-    <>
-      <Head>
-        <title>
-          Resrv | Admin
-        </title>
-      </Head>
-      <AdminSideNav activePage={activePage} setActivePage={setActivePage} />
-      <main className='main-container'>
-        <Header activePage={activePage} {...user} role={user?.UserLevel?.role} />
-        <AdminContent activePage={activePage} modal={modal} setModal={setModal} />
-      </main>
-    </>
-  )
-}
+  try {
+    // if no session, redirect to login
+    if (!session) throw new Error()
 
-const Registry: FC<{
+    // validate session token
+    const user: User = await fetch(`${process.env.BACKEND_URL}/user/current`, {
+      headers: { Authorization: `Bearer ${session}` },
+    }).then((response) => response.json())
 
-}> = () => {
-  return (
-    <p>
-      Registry
-    </p>
-  )
-}
+    // if session is expired or invalid
+    if ('error' in user) throw new Error()
 
-const Student: FC<{
+    return { props: { user } }
+  } catch (_error) {
+    context.res.setHeader(
+      'Set-Cookie',
+      serialize('session', '-', {
+        path: '/',
+        maxAge: 0,
+      })
+    )
 
-}> = () => {
-  return (
-    <p>
-      Student
-    </p>
-  )
+    return {
+      redirect: {
+        destination: '/sign-in',
+        permanent: false,
+      },
+    }
+  }
 }

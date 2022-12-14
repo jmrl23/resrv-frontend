@@ -11,7 +11,7 @@ delete twColors['blueGray']
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    'src/{pages,components}/**/*.tsx'
+    'src/{pages,views,components}/**/*.tsx'
   ],
   theme: {
     colors: twColors,
