@@ -2,11 +2,13 @@ import type { GetServerSideProps, NextPage } from 'next'
 import type { User } from '../types'
 import { serialize } from 'cookie'
 import { Role } from '../types'
-import { Admin, Registry, Student } from '../views'
+import { Admin, Disabled, Registry, Student } from '../views'
 
 const Home: NextPage<{ user: User }> = (props) => {
   const { user } = props
-  const { role } = user.UserLevel
+  const role = user.UserLevel?.role
+
+  if (user.isDisabled) return <Disabled user={user} />
 
   return (
     <>
