@@ -33,7 +33,15 @@ export const Departments: FC<Record<string, never>> = () => {
         Authorization: `Bearer ${cookies.session}`,
         'Content-Type': 'application/json',
       },
-    }).then((response) => response.json())
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          toast.error(data.message)
+          return []
+        }
+        return data
+      })
   }
   const { data, isLoading, error } = useSWR<Department[]>(
     '/api/department/list',

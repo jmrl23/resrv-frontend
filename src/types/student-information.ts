@@ -1,3 +1,4 @@
+import { Department } from './department'
 import { Gender } from './gender'
 
 export type StudentInformation = {
@@ -10,4 +11,5 @@ export type StudentInformation = {
   studentId: string | null
   userId: string
   departmentId: string
+  department: Department
 } | null
