@@ -6,12 +6,12 @@ import {
   Header,
   Moderators,
   Sidebar,
-  Students,
+  Students
 } from '../components'
 import {
   BuildingOffice2Icon,
   UsersIcon,
-  UserGroupIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline'
 
 export const Admin: FC<{ user: User }> = ({ user }) => {

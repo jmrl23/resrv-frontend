@@ -126,7 +126,7 @@ export const getServerSideProps: GetServerSideProps<{
   // if token is present
   if (token) {
     await fetch(`${process.env.BACKEND_URL}/user/current`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${token}` }
     })
       .then((response) => response.json())
       .then((user) => 'error' in user)
@@ -137,7 +137,7 @@ export const getServerSideProps: GetServerSideProps<{
           'Set-Cookie',
           serialize('session', token as string, {
             path: '/',
-            maxAge: 1000 * 60 * 60 * 24 * 30,
+            maxAge: 1000 * 60 * 60 * 24 * 30
           })
         )
       })
@@ -150,8 +150,8 @@ export const getServerSideProps: GetServerSideProps<{
     return {
       redirect: {
         destination: '/',
-        permanent: false,
-      },
+        permanent: false
+      }
     }
 
   const errorMap = new Map<string | string[], string>()
@@ -161,7 +161,7 @@ export const getServerSideProps: GetServerSideProps<{
   if (error) return { props: { error: errorMap.get(error) ?? null } }
 
   return {
-    props: {},
+    props: {}
   }
 }
 

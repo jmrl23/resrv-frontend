@@ -1,5 +1,5 @@
 import { Switch } from '@headlessui/react'
-import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { type FC, useEffect, useState, useRef, useCallback, type FormEvent, type FormEventHandler, type Dispatch, type SetStateAction } from 'react'
 import { useCookies } from 'react-cookie'
 import { toast } from 'react-toastify'
@@ -10,9 +10,9 @@ import useSWR, { useSWRConfig } from 'swr'
 
 export const Students: FC<Record<string, never>> = () => {
   const [cookies] = useCookies(['session'])
-  const take = 20
   const [skip, setSkip] = useState<number>(0)
   const [modal, setModal] = useState<{ for: string, data?: Record<string, unknown> } | null>(null)
+  const take = 20
   const searchFormRef = useRef<HTMLFormElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const filterDepartmentRef = useRef<HTMLSelectElement>(null)
@@ -165,16 +165,19 @@ export const TableRow: FC<{
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         id: student.id,
-        state: enabled,
-      }),
+        state: enabled
+      })
     })
       .then((response) => response.json())
-      .then((data) => setEnabled(!data.isDisabled))
-      .then(() => mutate())
+      .then((data) => {
+        if (data.error) return toast.error(data.message)
+        setEnabled(!data.isDisabled)
+      })
+      .finally(() => mutate())
     setEnabled(!enabled)
   }
 
@@ -244,8 +247,8 @@ export const DeleteModal: FC<{
         if (data.error) return toast.error(data.message)
         toast.success(`User ${user.email} removed!`)
         hide()
-        mutate()
       })
+      .finally(() => mutate())
   }
 
   return (
@@ -256,14 +259,10 @@ export const DeleteModal: FC<{
             Delete Department
           </h2>
           <button className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200" type="button" title="close" onClick={hide}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <XMarkIcon className="w-6 h-6" />
           </button>
         </header>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-20 h-20 mx-auto my-4 text-red-500">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-        </svg>
+        <TrashIcon className="w-20 h-20 mx-auto my-4 text-red-500" />
         <section className="flex flex-col gap-y-4">
           <h3 className="text-center">
             Are you sure you want to delete <span className='font-bold'>{user.email}</span>?

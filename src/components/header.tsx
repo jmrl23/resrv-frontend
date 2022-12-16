@@ -5,7 +5,7 @@ import {
   MouseEvent,
   MouseEventHandler,
   useCallback,
-  Fragment,
+  Fragment
 } from 'react'
 import { Role } from '../types'
 import { useRouter } from 'next/router'
@@ -13,7 +13,7 @@ import { useCookies } from 'react-cookie'
 import {
   ChevronDownIcon,
   UserCircleIcon,
-  ArrowLeftOnRectangleIcon,
+  ArrowLeftOnRectangleIcon
 } from '@heroicons/react/24/outline'
 import { Menu, Transition } from '@headlessui/react'
 

@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<{ user: User }> = async (
 
     // validate session token
     const user: User = await fetch(`${process.env.BACKEND_URL}/user/current`, {
-      headers: { Authorization: `Bearer ${session}` },
+      headers: { Authorization: `Bearer ${session}` }
     }).then((response) => response.json())
 
     // if session is expired or invalid
@@ -44,15 +44,15 @@ export const getServerSideProps: GetServerSideProps<{ user: User }> = async (
       'Set-Cookie',
       serialize('session', '-', {
         path: '/',
-        maxAge: 0,
+        maxAge: 0
       })
     )
 
     return {
       redirect: {
         destination: '/sign-in',
-        permanent: false,
-      },
+        permanent: false
+      }
     }
   }
 }

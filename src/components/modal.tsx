@@ -1,10 +1,17 @@
-import { FC, ReactNode, useRef } from 'react'
+import { FC, ReactNode, useEffect, useRef } from 'react'
 
 export const Modal: FC<{ children: ReactNode; hide: () => void }> = ({
   children,
-  hide,
+  hide
 }) => {
   const modalRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    document.body.classList.add('overflow-hidden')
+    return () => {
+      document.body.classList.remove('overflow-hidden')
+    }
+  }, [])
 
   return (
     <div

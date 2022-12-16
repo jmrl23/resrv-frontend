@@ -1,4 +1,5 @@
 import { Role } from './role'
+import { User } from './user'
 
 export type UserLevel = {
   id: string
@@ -6,4 +7,5 @@ export type UserLevel = {
   lastUpdated: Date
   email: string
   role: Role
+  User: User
 } | null
