@@ -15,7 +15,7 @@ export const Modal: FC<{ children: ReactNode; hide: () => void }> = ({
 
   return (
     <div
-      className="w-full h-full fixed z-50 left-0 top-0 backdrop-blur-sm bg-black/30 grid place-items-center"
+      className='w-full h-full fixed z-50 left-0 top-0 backdrop-blur-sm bg-black/30 grid place-items-center'
       ref={modalRef}
       onClick={(e) =>
         (e.target === modalRef.current ||
@@ -23,7 +23,7 @@ export const Modal: FC<{ children: ReactNode; hide: () => void }> = ({
         hide()
       }
     >
-      <div className="p-4 md:p-0 w-full">{children}</div>
+      <div className='p-4 md:p-0 w-full'>{children}</div>
     </div>
   )
 }
