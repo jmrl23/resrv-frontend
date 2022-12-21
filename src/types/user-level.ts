@@ -7,5 +7,5 @@ export type UserLevel = {
   lastUpdated: Date
   email: string
   role: Role
-  User: User
-} | null
+  User?: User
+}

@@ -13,8 +13,8 @@ const Home: NextPage<{ user: User }> = (props) => {
   return (
     <>
       {role === Role.ADMIN && <Admin {...props} />}
-      {role === Role.REGISTRY && <Registry />}
-      {role === Role.STUDENT && <Student />}
+      {role === Role.REGISTRY && <Registry {...props} />}
+      {role === Role.STUDENT && <Student {...props} />}
     </>
   )
 }

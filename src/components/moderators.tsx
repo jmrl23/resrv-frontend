@@ -84,7 +84,7 @@ export const Moderators: FC<Record<string, never>> = () => {
             {userLevels &&
               userLevels.map((userLevel) => (
                 <ModeratorsTableRow
-                  key={userLevel?.id}
+                  key={userLevel.id}
                   userLevel={userLevel}
                   setModal={setModal}
                   mutate={() => mutate('/api/userlevel/list')}
@@ -133,7 +133,7 @@ export const ModeratorsTableRow: FC<{
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        id: userLevel?.User.id,
+        id: userLevel?.User?.id,
         state: enabled
       })
     })
@@ -144,7 +144,7 @@ export const ModeratorsTableRow: FC<{
   }
   const handleRoleChange = () => {
     if (!roleRef.current) return
-    const email = userLevel?.email
+    const email = userLevel.email
     const role = roleRef.current.value
     fetch('/api/user/set-role', {
       method: 'POST',
@@ -173,21 +173,19 @@ export const ModeratorsTableRow: FC<{
           <span
             className={
               'w-2 h-2 rounded-full ' +
-              (userLevel?.User ? 'bg-green-500' : 'bg-gray-300')
+              (userLevel.User ? 'bg-green-500' : 'bg-gray-300')
             }
           ></span>
-          <span
-            className={userLevel?.User ? 'text-green-500' : 'text-gray-400'}
-          >
-            {userLevel?.User ? 'Active' : 'Unregistered'}
+          <span className={userLevel.User ? 'text-green-500' : 'text-gray-400'}>
+            {userLevel.User ? 'Active' : 'Unregistered'}
           </span>
         </div>
       </td>
-      <td>{userLevel?.email}</td>
+      <td>{userLevel.email}</td>
       <td>
         <select
           className='border-none bg-gray-200 rounded-md text-sm'
-          value={userLevel?.role}
+          value={userLevel.role}
           onChange={handleRoleChange}
           ref={roleRef}
         >
@@ -198,7 +196,7 @@ export const ModeratorsTableRow: FC<{
         </select>
       </td>
       <td>
-        {userLevel?.User && (
+        {userLevel.User && (
           <Switch
             className={
               'relative inline-flex h-[25px] w-[50px] cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 ' +
@@ -227,7 +225,7 @@ export const ModeratorsTableRow: FC<{
             setModal({
               for: 'delete',
               data: {
-                email: userLevel?.email ?? ''
+                email: userLevel.email ?? ''
               }
             })
           }}
@@ -387,7 +385,10 @@ export const ModeratorsDeleteModal: FC<{
         <section className='flex flex-col gap-y-4'>
           <h3 className='text-center'>
             Are you sure you want to delete{' '}
-            <span className='font-bold'>{userLevel?.email}</span>?
+            <span className='font-bold break-words'>
+              {userLevel.email}
+            </span>
+            ?
           </h3>
         </section>
         <footer className='flex justify-end gap-x-4 mt-4'>

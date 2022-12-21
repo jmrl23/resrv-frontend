@@ -12,4 +12,4 @@ export type StudentInformation = {
   userId: string
   departmentId: string
   department: Department
-} | null
+}

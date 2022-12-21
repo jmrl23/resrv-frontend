@@ -42,8 +42,8 @@ export const Header: FC<{
           <div className='rounded-full overflow-hidden w-10 h-10'>
             <Image
               className='w-full h-full'
-              src={user.picture ?? ''}
-              alt={`${user.givenName}'s picture`}
+              src={user?.picture ?? ''}
+              alt={`${user?.givenName}'s picture`}
               width={150}
               height={150}
               priority
@@ -51,10 +51,10 @@ export const Header: FC<{
           </div>
           <p className='flex items-center gap-x-2'>
             <span className='font-bold hidden md:inline'>
-              {user.UserLevel?.role}
+              {user?.UserLevel?.role}
             </span>
             <span className='overflow-hidden max-w-[250px] text-ellipsis'>
-              {user.givenName}
+              {user?.givenName}
             </span>
           </p>
           <ChevronDownIcon className='w-6 h-6' />

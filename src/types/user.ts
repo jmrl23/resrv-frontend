@@ -7,11 +7,11 @@ export type User = {
   lastUpdated: Date
   isDisabled: boolean
   email: string
-  givenName: string | null
-  familyName: string | null
-  displayName: string | null
-  picture: string | null
+  givenName?: string
+  familyName?: string
+  displayName?: string
+  picture?: string
   userLevelId: string | null
   UserLevel: UserLevel
-  StudentInformation: StudentInformation
+  StudentInformation?: StudentInformation
 }

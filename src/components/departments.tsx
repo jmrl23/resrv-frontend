@@ -514,7 +514,7 @@ export const DepartmentsDeleteModal: FC<{
         <section className='flex flex-col gap-y-4'>
           <h3 className='text-center'>
             Are you sure you want to delete{' '}
-            <span className='font-bold'>{department?.name}</span>?
+            <span className='font-bold break-words'>{department.name}</span>?
           </h3>
         </section>
         <footer className='flex justify-end gap-x-4 mt-4'>
