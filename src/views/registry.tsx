@@ -1,7 +1,14 @@
 import type { FC } from 'react'
 import type { User } from '../types'
 import { useState } from 'react'
-import { Header, Programs, Sidebar, Students } from '../components'
+import {
+  Header,
+  Programs,
+  Sidebar,
+  Students,
+  Reservations,
+  Courses
+} from '../components'
 import {
   BuildingOffice2Icon,
   UsersIcon,
@@ -59,8 +66,10 @@ export const Registry: FC<{ user: User }> = ({ user }) => {
       <main className='main-container'>
         <Header activePage={page} user={user} />
         <section>
+          {page === 'reservations' && <Reservations />}
           {page === 'programs' && <Programs />}
           {page === 'students' && <Students />}
+          {page === 'courses' && <Courses />}
         </section>
       </main>
     </>

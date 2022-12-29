@@ -72,7 +72,7 @@ export const Programs: FC<Record<string, never>> = () => {
         </div>
         {data &&
           data.map((program) => (
-            <Card
+            <ProgramsCard
               key={program.id}
               setModal={setModal}
               program={program}
@@ -530,7 +530,7 @@ export const ProgramsDeleteModal: FC<{
   )
 }
 
-export const Card: FC<{
+export const ProgramsCard: FC<{
   setModal: Dispatch<
     SetStateAction<{
       for: string
@@ -564,7 +564,7 @@ export const Card: FC<{
   return (
     <>
       <div
-        className={`bg-${program.color} w-[300px] h-[300px] md:w-[200px] md:h-[200px] lg:w-[300px] lg:h-[300px] rounded-lg p-4 text-white relative shado`}
+        className={`bg-${program.color} w-[300px] h-[300px] md:w-[200px] md:h-[200px] lg:w-[300px] lg:h-[300px] rounded-lg p-4 text-white relative shadow`}
       >
         <header className='absolute w-full left-0 top-0 flex justify-between p-4'>
           <Switch
