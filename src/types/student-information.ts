@@ -1,4 +1,4 @@
-import { Department } from './department'
+import { Program } from './program'
 import { Gender } from './gender'
 
 export type StudentInformation = {
@@ -10,6 +10,6 @@ export type StudentInformation = {
   contactNumber: string | null
   studentId: string | null
   userId: string
-  departmentId: string
-  department: Department
+  programId: string
+  program: Program
 }

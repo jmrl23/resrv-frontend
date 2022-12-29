@@ -19,7 +19,7 @@ import {
 } from 'react'
 import { useCookies } from 'react-cookie'
 import { toast } from 'react-toastify'
-import { type Department, Role, type User } from '../types'
+import { type Program, Role, type User } from '../types'
 import { Modal } from './modal'
 import Link from 'next/link'
 import useSWR, { useSWRConfig } from 'swr'
@@ -34,9 +34,9 @@ export const Students: FC<Record<string, never>> = () => {
   const take = 20
   const searchFormRef = useRef<HTMLFormElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const filterDepartmentRef = useRef<HTMLSelectElement>(null)
-  const departmentFetcher = async () => {
-    return fetch('/api/department/list', {
+  const filterProgramRef = useRef<HTMLSelectElement>(null)
+  const programFetcher = async () => {
+    return fetch('/api/program/list', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
@@ -53,17 +53,16 @@ export const Students: FC<Record<string, never>> = () => {
       })
   }
   const studentFetcher = useCallback(async () => {
-    if (!searchInputRef.current || !filterDepartmentRef.current) return []
+    if (!searchInputRef.current || !filterProgramRef.current) return []
     const keyword = searchInputRef.current.value.trim()
-    const departmentId = filterDepartmentRef.current.value.trim()
+    const programId = filterProgramRef.current.value.trim()
     const payload: Record<string, unknown> = {
       role: [Role.STUDENT],
       skip: parseInt(skip as unknown as string, 10),
       take
     }
     if (keyword) payload.keyword = keyword
-    if (departmentId && departmentId !== 'placeholder')
-      payload.departmentId = departmentId
+    if (programId && programId !== 'placeholder') payload.programId = programId
     return fetch('/api/user/list', {
       method: 'POST',
       headers: {
@@ -80,10 +79,10 @@ export const Students: FC<Record<string, never>> = () => {
         }
         return data
       })
-  }, [searchInputRef, filterDepartmentRef, cookies.session, skip])
-  const { data: departments } = useSWR<Department[]>(
-    '/api/department/list',
-    departmentFetcher
+  }, [searchInputRef, filterProgramRef, cookies.session, skip])
+  const { data: programs } = useSWR<Program[]>(
+    '/api/program/list',
+    programFetcher
   )
   const { data: students, isLoading } = useSWR<User[]>(
     '/api/user/list',
@@ -141,16 +140,16 @@ export const Students: FC<Record<string, never>> = () => {
           </button>
           <select
             className='border-none bg-gray-200 rounded-md text-sm grow md:-order-1'
-            title='Filter by Department'
-            ref={filterDepartmentRef}
+            title='Filter by Program'
+            ref={filterProgramRef}
             onChange={() => mutate('/api/user/list')}
           >
             <option value='placeholder' defaultChecked>
-              Filter by department
+              Filter by program
             </option>
-            {departments?.map((department) => (
-              <option key={department.id} value={department.id}>
-                {department.alias}
+            {programs?.map((program) => (
+              <option key={program.id} value={program.id}>
+                {program.alias}
               </option>
             ))}
           </select>
@@ -176,7 +175,7 @@ export const Students: FC<Record<string, never>> = () => {
               <th>Enable</th>
               <th>Email</th>
               <th>Name</th>
-              <th>Department</th>
+              <th>Program</th>
               <th>{/* actions */}</th>
             </tr>
           </thead>
@@ -262,7 +261,7 @@ export const StudentsTableRow: FC<{
       <td>{student.email}</td>
       <td>{student.displayName}</td>
       <td>
-        {student.StudentInformation?.department?.id ?? (
+        {student.StudentInformation?.program?.id ?? (
           <span className='text-gray-400'>N/A</span>
         )}
       </td>
@@ -325,7 +324,7 @@ export const StudentsDeleteModal: FC<{
         onSubmit={handleSubmit}
       >
         <header className='flex justify-between items-center'>
-          <h2 className='font-poppins text-xl font-bold'>Delete Department</h2>
+          <h2 className='font-poppins text-xl font-bold'>Delete Program</h2>
           <button
             className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200'
             type='button'

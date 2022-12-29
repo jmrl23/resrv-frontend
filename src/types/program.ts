@@ -1,4 +1,4 @@
-export type Department = {
+export type Program = {
   id: string
   dateCreated: Date
   lastUpdated: Date

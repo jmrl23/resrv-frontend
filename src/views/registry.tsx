@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import type { User } from '../types'
 import { useState } from 'react'
-import { Departments, Header, Sidebar, Students } from '../components'
+import { Header, Programs, Sidebar, Students } from '../components'
 import {
   BuildingOffice2Icon,
   UsersIcon,
@@ -22,7 +22,7 @@ export const Registry: FC<{ user: User }> = ({ user }) => {
         <button
           className={page === 'reservations' ? 'active' : ''}
           type='button'
-          title='departments'
+          title='reservations'
           onClick={() => setPage('reservations')}
         >
           <CalendarDaysIcon className='w-6 h-6' />
@@ -38,13 +38,13 @@ export const Registry: FC<{ user: User }> = ({ user }) => {
           <span>Students</span>
         </button>
         <button
-          className={page === 'departments' ? 'active' : ''}
+          className={page === 'programs' ? 'active' : ''}
           type='button'
-          title='departments'
-          onClick={() => setPage('departments')}
+          title='programs'
+          onClick={() => setPage('programs')}
         >
           <BuildingOffice2Icon className='w-6 h-6' />
-          <span>Departments</span>
+          <span>Programs</span>
         </button>
         <button
           className={page === 'courses' ? 'active' : ''}
@@ -59,7 +59,7 @@ export const Registry: FC<{ user: User }> = ({ user }) => {
       <main className='main-container'>
         <Header activePage={page} user={user} />
         <section>
-          {page === 'departments' && <Departments />}
+          {page === 'programs' && <Programs />}
           {page === 'students' && <Students />}
         </section>
       </main>

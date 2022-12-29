@@ -1,4 +1,4 @@
-export * from './departments'
+export * from './programs'
 export * from './students'
 export * from './moderators'
 export * from './sidebar'

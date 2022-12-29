@@ -1,4 +1,4 @@
-export * from './department'
+export * from './program'
 export * from './gender'
 export * from './role'
 export * from './student-information'

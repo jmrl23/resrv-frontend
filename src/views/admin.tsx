@@ -1,13 +1,7 @@
 import type { FC } from 'react'
 import type { User } from '../types'
 import { useState } from 'react'
-import {
-  Departments,
-  Header,
-  Moderators,
-  Sidebar,
-  Students
-} from '../components'
+import { Programs, Header, Moderators, Sidebar, Students } from '../components'
 import {
   BuildingOffice2Icon,
   UsersIcon,
@@ -16,7 +10,7 @@ import {
 import Head from 'next/head'
 
 export const Admin: FC<{ user: User }> = ({ user }) => {
-  const [page, setPage] = useState<string>('departments')
+  const [page, setPage] = useState<string>('programs')
 
   return (
     <>
@@ -25,13 +19,13 @@ export const Admin: FC<{ user: User }> = ({ user }) => {
       </Head>
       <Sidebar>
         <button
-          className={page === 'departments' ? 'active' : ''}
+          className={page === 'programs' ? 'active' : ''}
           type='button'
-          title='departments'
-          onClick={() => setPage('departments')}
+          title='programs'
+          onClick={() => setPage('programs')}
         >
           <BuildingOffice2Icon className='w-6 h-6' />
-          <span>Departments</span>
+          <span>Programs</span>
         </button>
         <button
           className={page === 'students' ? 'active' : ''}
@@ -55,7 +49,7 @@ export const Admin: FC<{ user: User }> = ({ user }) => {
       <main className='main-container'>
         <Header activePage={page} user={user} />
         <section>
-          {page === 'departments' && <Departments />}
+          {page === 'programs' && <Programs />}
           {page === 'students' && <Students />}
           {page === 'moderators' && <Moderators />}
         </section>

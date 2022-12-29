@@ -1,5 +1,5 @@
 import useSWR, { useSWRConfig } from 'swr'
-import type { Department } from '../types'
+import type { Program } from '../types'
 import {
   Dispatch,
   FormEvent,
@@ -23,15 +23,15 @@ import {
 import { Modal } from './modal'
 import { toast } from 'react-toastify'
 
-export const Departments: FC<Record<string, never>> = () => {
+export const Programs: FC<Record<string, never>> = () => {
   const [modal, setModal] = useState<{
     for: string
     data?: Record<string, unknown>
   } | null>(null)
   const [cookies] = useCookies(['session'])
   const { mutate } = useSWRConfig()
-  const departmentFetcher = async () => {
-    return fetch('/api/department/list', {
+  const programFetcher = async () => {
+    return fetch('/api/program/list', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
@@ -47,9 +47,9 @@ export const Departments: FC<Record<string, never>> = () => {
         return data
       })
   }
-  const { data, isLoading, error } = useSWR<Department[]>(
-    '/api/department/list',
-    departmentFetcher
+  const { data, isLoading, error } = useSWR<Program[]>(
+    '/api/program/list',
+    programFetcher
   )
 
   useEffect(() => {
@@ -71,32 +71,32 @@ export const Departments: FC<Record<string, never>> = () => {
           </div>
         </div>
         {data &&
-          data.map((department) => (
+          data.map((program) => (
             <Card
-              key={department.id}
+              key={program.id}
               setModal={setModal}
-              department={department}
-              mutate={() => mutate('/api/department/list')}
+              program={program}
+              mutate={() => mutate('/api/program/list')}
             />
           ))}
       </div>
       {modal &&
         ((modal.for === 'create' && (
-          <DepartmentsCreateModal
-            mutate={() => mutate('/api/department/list')}
+          <ProgramsCreateModal
+            mutate={() => mutate('/api/program/list')}
             hide={() => setModal(null)}
           />
         )) ||
           (modal.for === 'update' && (
             <UpdateModal
-              mutate={() => mutate('/api/department/list')}
+              mutate={() => mutate('/api/program/list')}
               hide={() => setModal(null)}
               modal={modal}
             />
           )) ||
           (modal?.for === 'delete' && (
-            <DepartmentsDeleteModal
-              mutate={() => mutate('/api/department/list')}
+            <ProgramsDeleteModal
+              mutate={() => mutate('/api/program/list')}
               hide={() => setModal(null)}
               modal={modal}
             />
@@ -105,7 +105,7 @@ export const Departments: FC<Record<string, never>> = () => {
   )
 }
 
-export const DepartmentsCreateModal: FC<{
+export const ProgramsCreateModal: FC<{
   hide: () => void
   mutate: () => void
 }> = ({ hide, mutate }) => {
@@ -117,10 +117,10 @@ export const DepartmentsCreateModal: FC<{
     event.preventDefault()
     const form = formRef?.current
     if (!form) return
-    const name = form['department-name'].value.trim()
-    const alias = form['department-alias'].value.trim().toUpperCase()
-    const color = form['department-color'].value
-    fetch('/api/department/create', {
+    const name = form['program-name'].value.trim()
+    const alias = form['program-alias'].value.trim().toUpperCase()
+    const color = form['program-color'].value
+    fetch('/api/program/create', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
@@ -135,7 +135,7 @@ export const DepartmentsCreateModal: FC<{
       .then((response) => response.json())
       .then((data) => {
         if (data.error) return toast.error(data.message)
-        toast.success(`Department ${alias} created!`)
+        toast.success(`Program ${alias} created!`)
         hide()
         mutate()
       })
@@ -149,7 +149,7 @@ export const DepartmentsCreateModal: FC<{
         onSubmit={handleSubmit}
       >
         <header className='flex justify-between items-center'>
-          <h2 className='font-poppins text-xl font-bold'>Create Department</h2>
+          <h2 className='font-poppins text-xl font-bold'>Create Program</h2>
           <button
             className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200'
             type='button'
@@ -162,26 +162,26 @@ export const DepartmentsCreateModal: FC<{
         <BuildingOffice2Icon className='w-20 h-20 mx-auto my-4' />
         <section className='flex flex-col gap-y-4'>
           <div>
-            <label className='font-bold' htmlFor='department-name'>
+            <label className='font-bold' htmlFor='program-name'>
               Name
             </label>
             <input
               className='w-full px-4 py-2 rounded-md bg-gray-200'
               type='text'
-              name='department-name'
-              id='department-name'
+              name='program-name'
+              id='program-name'
               placeholder='Bachelor of Science in Information Technology'
             />
           </div>
           <div>
-            <label className='font-bold' htmlFor='department-alias'>
+            <label className='font-bold' htmlFor='program-alias'>
               Alias
             </label>
             <input
               className='w-full px-4 py-2 rounded-md bg-gray-200'
               type='text'
-              name='department-alias'
-              id='department-alias'
+              name='program-alias'
+              id='program-alias'
               placeholder='BSIT'
             />
           </div>
@@ -192,7 +192,7 @@ export const DepartmentsCreateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='slate-900'
                   defaultChecked
                 />
@@ -202,7 +202,7 @@ export const DepartmentsCreateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='red-500'
                 />
                 <span className='h-4 w-4 bg-red-500 block rounded-full peer-checked:bg-red-600 peer-checked:ring' />
@@ -211,7 +211,7 @@ export const DepartmentsCreateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='orange-500'
                 />
                 <span className='h-4 w-4 bg-orange-500 block rounded-full peer-checked:bg-orange-600 peer-checked:ring' />
@@ -220,7 +220,7 @@ export const DepartmentsCreateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='amber-500'
                 />
                 <span className='h-4 w-4 bg-amber-500 block rounded-full peer-checked:bg-amber-600 peer-checked:ring' />
@@ -229,7 +229,7 @@ export const DepartmentsCreateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='green-500'
                 />
                 <span className='h-4 w-4 bg-green-500 block rounded-full peer-checked:bg-green-600 peer-checked:ring' />
@@ -238,7 +238,7 @@ export const DepartmentsCreateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='blue-500'
                 />
                 <span className='h-4 w-4 bg-blue-500 block rounded-full peer-checked:bg-blue-600 peer-checked:ring' />
@@ -247,7 +247,7 @@ export const DepartmentsCreateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='purple-500'
                 />
                 <span className='h-4 w-4 bg-purple-500 block rounded-full peer-checked:bg-purple-600 peer-checked:ring' />
@@ -256,7 +256,7 @@ export const DepartmentsCreateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='pink-500'
                 />
                 <span className='h-4 w-4 bg-pink-500 block rounded-full peer-checked:bg-pink-600 peer-checked:ring' />
@@ -282,7 +282,7 @@ export const UpdateModal: FC<{
   mutate: () => void
   modal: { for: string; data?: unknown } | null
 }> = ({ hide, modal, mutate }) => {
-  const department = modal?.data as Department
+  const program = modal?.data as Program
   const [cookies] = useCookies(['session'])
   const formRef = useRef<HTMLFormElement>(null)
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
@@ -291,11 +291,11 @@ export const UpdateModal: FC<{
     event.preventDefault()
     const form = formRef?.current
     if (!form || !modal?.data) return
-    const data = modal.data as Department
-    const name = form['department-name'].value.trim()
-    const alias = form['department-alias'].value.trim().toUpperCase()
-    const color = form['department-color'].value
-    fetch('/api/department/update', {
+    const data = modal.data as Program
+    const name = form['program-name'].value.trim()
+    const alias = form['program-alias'].value.trim().toUpperCase()
+    const color = form['program-color'].value
+    fetch('/api/program/update', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
@@ -311,7 +311,7 @@ export const UpdateModal: FC<{
       .then((response) => response.json())
       .then((data) => {
         if (data.error) return toast.error(data.message)
-        toast.success(`Department ${alias} updated!`)
+        toast.success(`Program ${alias} updated!`)
         hide()
         mutate()
       })
@@ -325,7 +325,7 @@ export const UpdateModal: FC<{
         onSubmit={handleSubmit}
       >
         <header className='flex justify-between items-center'>
-          <h2 className='font-poppins text-xl font-bold'>Create Department</h2>
+          <h2 className='font-poppins text-xl font-bold'>Create Program</h2>
           <button
             className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200'
             type='button'
@@ -338,29 +338,29 @@ export const UpdateModal: FC<{
         <BuildingOffice2Icon className='w-20 h-20 mx-auto my-4' />
         <section className='flex flex-col gap-y-4'>
           <div>
-            <label className='font-bold' htmlFor='department-name'>
+            <label className='font-bold' htmlFor='program-name'>
               Name
             </label>
             <input
               className='w-full px-4 py-2 rounded-md bg-gray-200'
               type='text'
-              name='department-name'
-              id='department-name'
+              name='program-name'
+              id='program-name'
               placeholder='Bachelor of Science in Information Technology'
-              defaultValue={department.name}
+              defaultValue={program.name}
             />
           </div>
           <div>
-            <label className='font-bold' htmlFor='department-alias'>
+            <label className='font-bold' htmlFor='program-alias'>
               Alias
             </label>
             <input
               className='w-full px-4 py-2 rounded-md bg-gray-200'
               type='text'
-              name='department-alias'
-              id='department-alias'
+              name='program-alias'
+              id='program-alias'
               placeholder='BSIT'
-              defaultValue={department.alias}
+              defaultValue={program.alias}
             />
           </div>
           <div>
@@ -371,7 +371,7 @@ export const UpdateModal: FC<{
                   className='hidden peer'
                   type='radio'
                   defaultValue='slate-900'
-                  defaultChecked={department.color === 'slate-900'}
+                  defaultChecked={program.color === 'slate-900'}
                 />
                 <span className='h-4 w-4 bg-slate-900 block rounded-full peer-checked:bg-slate-800 peer-checked:ring' />
               </label>
@@ -379,9 +379,9 @@ export const UpdateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='red-500'
-                  defaultChecked={department.color === 'red-500'}
+                  defaultChecked={program.color === 'red-500'}
                 />
                 <span className='h-4 w-4 bg-red-500 block rounded-full peer-checked:bg-red-600 peer-checked:ring' />
               </label>
@@ -389,9 +389,9 @@ export const UpdateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='orange-500'
-                  defaultChecked={department.color === 'orange-500'}
+                  defaultChecked={program.color === 'orange-500'}
                 />
                 <span className='h-4 w-4 bg-orange-500 block rounded-full peer-checked:bg-orange-600 peer-checked:ring' />
               </label>
@@ -399,9 +399,9 @@ export const UpdateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='amber-500'
-                  defaultChecked={department.color === 'amber-500'}
+                  defaultChecked={program.color === 'amber-500'}
                 />
                 <span className='h-4 w-4 bg-amber-500 block rounded-full peer-checked:bg-amber-600 peer-checked:ring' />
               </label>
@@ -409,9 +409,9 @@ export const UpdateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='green-500'
-                  defaultChecked={department.color === 'green-500'}
+                  defaultChecked={program.color === 'green-500'}
                 />
                 <span className='h-4 w-4 bg-green-500 block rounded-full peer-checked:bg-green-600 peer-checked:ring' />
               </label>
@@ -419,9 +419,9 @@ export const UpdateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='blue-500'
-                  defaultChecked={department.color === 'blue-500'}
+                  defaultChecked={program.color === 'blue-500'}
                 />
                 <span className='h-4 w-4 bg-blue-500 block rounded-full peer-checked:bg-blue-600 peer-checked:ring' />
               </label>
@@ -429,9 +429,9 @@ export const UpdateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='purple-500'
-                  defaultChecked={department.color === 'purple-500'}
+                  defaultChecked={program.color === 'purple-500'}
                 />
                 <span className='h-4 w-4 bg-purple-500 block rounded-full peer-checked:bg-purple-600 peer-checked:ring' />
               </label>
@@ -439,9 +439,9 @@ export const UpdateModal: FC<{
                 <input
                   className='hidden peer'
                   type='radio'
-                  name='department-color'
+                  name='program-color'
                   defaultValue='pink-500'
-                  defaultChecked={department.color === 'pink-500'}
+                  defaultChecked={program.color === 'pink-500'}
                 />
                 <span className='h-4 w-4 bg-pink-500 block rounded-full peer-checked:bg-pink-600 peer-checked:ring' />
               </label>
@@ -461,12 +461,12 @@ export const UpdateModal: FC<{
   )
 }
 
-export const DepartmentsDeleteModal: FC<{
+export const ProgramsDeleteModal: FC<{
   hide: () => void
   mutate: () => void
   modal: { for: string; data?: unknown } | null
 }> = ({ hide, mutate, modal }) => {
-  const department: Department = modal?.data as Department
+  const program: Program = modal?.data as Program
   const [cookies] = useCookies(['session'])
   const formRef = useRef<HTMLFormElement>(null)
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
@@ -475,18 +475,18 @@ export const DepartmentsDeleteModal: FC<{
     event.preventDefault()
     const form = formRef.current
     if (!form) return
-    fetch('/api/department/delete', {
+    fetch('/api/program/delete', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ id: department.id })
+      body: JSON.stringify({ id: program.id })
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.error) return toast.error(data.message)
-        toast.success(`Department ${department.alias} removed!`)
+        toast.success(`Program ${program.alias} removed!`)
         hide()
         mutate()
       })
@@ -500,7 +500,7 @@ export const DepartmentsDeleteModal: FC<{
         onSubmit={handleSubmit}
       >
         <header className='flex justify-between items-center'>
-          <h2 className='font-poppins text-xl font-bold'>Delete Department</h2>
+          <h2 className='font-poppins text-xl font-bold'>Delete Program</h2>
           <button
             className='p-2 rounded-lg bg-gray-100 hover:bg-gray-200'
             type='button'
@@ -514,7 +514,7 @@ export const DepartmentsDeleteModal: FC<{
         <section className='flex flex-col gap-y-4'>
           <h3 className='text-center'>
             Are you sure you want to delete{' '}
-            <span className='font-bold break-words'>{department.name}</span>?
+            <span className='font-bold break-words'>{program.name}</span>?
           </h3>
         </section>
         <footer className='flex justify-end gap-x-4 mt-4'>
@@ -537,21 +537,21 @@ export const Card: FC<{
       data?: Record<string, unknown> | undefined
     } | null>
   >
-  department: Department
+  program: Program
   mutate: () => void
-}> = ({ setModal, department, mutate }) => {
-  const [enabled, setEnabled] = useState<boolean>(!department.isDisabled)
+}> = ({ setModal, program, mutate }) => {
+  const [enabled, setEnabled] = useState<boolean>(!program.isDisabled)
   const [cookies] = useCookies(['session'])
 
   const handleOnChange = (_event: MouseEvent) => {
-    fetch('/api/department/toggle', {
+    fetch('/api/program/toggle', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        id: department.id,
+        id: program.id,
         state: enabled
       })
     })
@@ -564,7 +564,7 @@ export const Card: FC<{
   return (
     <>
       <div
-        className={`bg-${department.color} w-[300px] h-[300px] md:w-[200px] md:h-[200px] lg:w-[300px] lg:h-[300px] rounded-lg p-4 text-white relative shado`}
+        className={`bg-${program.color} w-[300px] h-[300px] md:w-[200px] md:h-[200px] lg:w-[300px] lg:h-[300px] rounded-lg p-4 text-white relative shado`}
       >
         <header className='absolute w-full left-0 top-0 flex justify-between p-4'>
           <Switch
@@ -607,9 +607,7 @@ export const Card: FC<{
                       className='hover:bg-gray-200 mt-1 px-4 block w-full text-left'
                       type='button'
                       title='Update'
-                      onClick={() =>
-                        setModal({ for: 'update', data: department })
-                      }
+                      onClick={() => setModal({ for: 'update', data: program })}
                     >
                       Update
                     </button>
@@ -619,9 +617,7 @@ export const Card: FC<{
                       className='hover:bg-gray-200 px-4 block w-full text-left text-red-500'
                       type='button'
                       title='Delete'
-                      onClick={() =>
-                        setModal({ for: 'delete', data: department })
-                      }
+                      onClick={() => setModal({ for: 'delete', data: program })}
                     >
                       Delete
                     </button>
@@ -634,9 +630,9 @@ export const Card: FC<{
         <div className='w-full h-full grid place-items-center'>
           <div className='text-center flex flex-col gap-y-4 items-center'>
             <h2 className='font-poppins text-4xl md:text-2xl lg:text-4xl font-bold'>
-              {department.alias}
+              {program.alias}
             </h2>
-            <p className='md:text-sm lg:text-base'>{department.name}</p>
+            <p className='md:text-sm lg:text-base'>{program.name}</p>
           </div>
         </div>
       </div>
