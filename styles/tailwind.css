@@ -28,6 +28,10 @@
     &.btn-blue {
       @apply bg-blue-500 hover:bg-blue-600 text-white;
     }
+
+    &.btn-green {
+      @apply bg-green-500 hover:bg-green-600 text-white;
+    }
   }
 
   .sidenav {
