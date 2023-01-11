@@ -28,7 +28,7 @@ export const Moderators: FC<Record<string, never>> = () => {
   } | null>(null)
 
   const userLevelFetcher = async () => {
-    return fetch('/api/userlevel/list', {
+    return fetch('/api/user/list', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
@@ -47,7 +47,7 @@ export const Moderators: FC<Record<string, never>> = () => {
   }
 
   const { data: userLevels, isLoading } = useSWR<UserLevel[]>(
-    '/api/userlevel/list',
+    '/api/user/list',
     userLevelFetcher
   )
   const { mutate } = useSWRConfig()
@@ -87,7 +87,7 @@ export const Moderators: FC<Record<string, never>> = () => {
                   key={userLevel.id}
                   userLevel={userLevel}
                   setModal={setModal}
-                  mutate={() => mutate('/api/userlevel/list')}
+                  mutate={() => mutate('/api/user/list')}
                 />
               ))}
           </tbody>
@@ -96,13 +96,13 @@ export const Moderators: FC<Record<string, never>> = () => {
       {modal && modal.for === 'create' && (
         <ModeratorsCreateModal
           hide={() => setModal(null)}
-          mutate={() => mutate('/api/userlevel/list')}
+          mutate={() => mutate('/api/user/list')}
         />
       )}
       {modal && modal.for === 'delete' && (
         <ModeratorsDeleteModal
           hide={() => setModal(null)}
-          mutate={() => mutate('/api/userlevel/list')}
+          mutate={() => mutate('/api/user/list')}
           modal={modal}
         />
       )}
@@ -122,11 +122,11 @@ export const ModeratorsTableRow: FC<{
 }> = ({ userLevel, mutate, setModal }) => {
   const [cookies] = useCookies()
   const [enabled, setEnabled] = useState<boolean>(
-    !userLevel?.User ? false : !userLevel.User.isDisabled
+    !userLevel?.User ? false : userLevel.User.enabled
   )
   const roleRef = useRef<HTMLSelectElement>(null)
   const handleStatusChange = () => {
-    fetch('/api/user/toggle', {
+    fetch('/api/user/update', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
@@ -134,11 +134,11 @@ export const ModeratorsTableRow: FC<{
       },
       body: JSON.stringify({
         id: userLevel?.User?.id,
-        state: enabled
+        enabled: !enabled
       })
     })
       .then((response) => response.json())
-      .then((data) => setEnabled(!data.isDisabled))
+      .then((data) => setEnabled(data.enabled))
       .finally(() => mutate())
     setEnabled(!enabled)
   }
@@ -146,7 +146,7 @@ export const ModeratorsTableRow: FC<{
     if (!roleRef.current) return
     const email = userLevel.email
     const role = roleRef.current.value
-    fetch('/api/user/set-role', {
+    fetch('/api/user-level/set', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
@@ -177,7 +177,7 @@ export const ModeratorsTableRow: FC<{
             }
           ></span>
           <span className={userLevel.User ? 'text-green-500' : 'text-gray-400'}>
-            {userLevel.User ? 'Active' : 'Unregistered'}
+            {userLevel?.User ? 'Active' : 'Unregistered'}
           </span>
         </div>
       </td>

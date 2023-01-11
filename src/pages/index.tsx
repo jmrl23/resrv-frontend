@@ -1,3 +1,5 @@
+// TODO: reconstruct components
+
 import type { GetServerSideProps, NextPage } from 'next'
 import type { User } from '../types'
 import { serialize } from 'cookie'
@@ -8,7 +10,7 @@ const Home: NextPage<{ user: User }> = (props) => {
   const { user } = props
   const role = user.UserLevel?.role
 
-  if (user.isDisabled) return <Disabled user={user} />
+  if (!user?.enabled) return <Disabled user={user} />
 
   return (
     <>

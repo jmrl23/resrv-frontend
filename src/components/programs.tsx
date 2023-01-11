@@ -119,7 +119,12 @@ export const ProgramsCreateModal: FC<{
     if (!form) return
     const name = form['program-name'].value.trim()
     const alias = form['program-alias'].value.trim().toUpperCase()
+    const yearCount = parseInt(form['program-yearcount'].value, 10)
     const color = form['program-color'].value
+    if (yearCount <= 0) {
+      toast.error('Invalid year count')
+      return
+    }
     fetch('/api/program/create', {
       method: 'POST',
       headers: {
@@ -129,6 +134,7 @@ export const ProgramsCreateModal: FC<{
       body: JSON.stringify({
         name,
         alias,
+        yearCount,
         color
       })
     })
@@ -183,6 +189,19 @@ export const ProgramsCreateModal: FC<{
               name='program-alias'
               id='program-alias'
               placeholder='BSIT'
+            />
+          </div>
+          <div>
+            <label className='font-bold' htmlFor='program-yearcount'>
+              Year count
+            </label>
+            <input
+              className='w-full px-4 py-2 rounded-md bg-gray-200'
+              type='number'
+              name='program-yearcount'
+              id='program-yearcount'
+              placeholder='4'
+              defaultValue={4}
             />
           </div>
           <div>
@@ -294,7 +313,12 @@ export const UpdateModal: FC<{
     const data = modal.data as Program
     const name = form['program-name'].value.trim()
     const alias = form['program-alias'].value.trim().toUpperCase()
+    const yearCount = parseInt(form['program-yearcount'].value, 10)
     const color = form['program-color'].value
+    if (yearCount <= 0) {
+      toast.error('Invalid year count')
+      return
+    }
     fetch('/api/program/update', {
       method: 'POST',
       headers: {
@@ -304,6 +328,7 @@ export const UpdateModal: FC<{
       body: JSON.stringify({
         id: data.id,
         name,
+        yearCount,
         alias,
         color
       })
@@ -361,6 +386,19 @@ export const UpdateModal: FC<{
               id='program-alias'
               placeholder='BSIT'
               defaultValue={program.alias}
+            />
+          </div>
+          <div>
+            <label className='font-bold' htmlFor='program-yearcount'>
+              Year count
+            </label>
+            <input
+              className='w-full px-4 py-2 rounded-md bg-gray-200'
+              type='number'
+              name='program-yearcount'
+              id='program-yearcount'
+              placeholder='4'
+              defaultValue={program.yearCount}
             />
           </div>
           <div>
@@ -540,11 +578,11 @@ export const ProgramsCard: FC<{
   program: Program
   mutate: () => void
 }> = ({ setModal, program, mutate }) => {
-  const [enabled, setEnabled] = useState<boolean>(!program.isDisabled)
+  const [enabled, setEnabled] = useState<boolean>(program.enabled)
   const [cookies] = useCookies(['session'])
 
   const handleOnChange = (_event: MouseEvent) => {
-    fetch('/api/program/toggle', {
+    fetch('/api/program/update', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${cookies.session}`,
@@ -552,11 +590,11 @@ export const ProgramsCard: FC<{
       },
       body: JSON.stringify({
         id: program.id,
-        state: enabled
+        enabled: !enabled
       })
     })
       .then((response) => response.json())
-      .then((data) => setEnabled(!data.isDisabled))
+      .then((data) => setEnabled(data.enabled))
       .then(() => mutate())
     setEnabled(!enabled)
   }
